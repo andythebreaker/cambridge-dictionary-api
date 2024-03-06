@@ -7,6 +7,9 @@ import { config } from 'dotenv';
 //https://stackoverflow.com/questions/8817423/why-is-dirname-not-defined-in-node-repl
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+
+import { updateDB } from './store.js';
+
 // Load environment variables from the .env file
 config();
 const __filename = fileURLToPath(import.meta.url);
@@ -127,24 +130,26 @@ app.get("/api/dictionary/:language/:entry", async (req, res) => {
         error: "word not found",
       });
     } else {
-      res.status(200).json({
-        word: word,
-        pos: pos,
-        verbs: verbs,
-        pronunciation: [
-          {
-            lang: "us",
-            url: usaudio,
-            pron: uspron,
-          },
-          {
-            lang: "uk",
-            url: ukaudio,
-            pron: ukpron,
-          },
-        ],
-        definition: definition,
-      });
+var resJSON={
+  word: word,
+  pos: pos,
+  verbs: verbs,
+  pronunciation: [
+    {
+      lang: "us",
+      url: usaudio,
+      pron: uspron,
+    },
+    {
+      lang: "uk",
+      url: ukaudio,
+      pron: ukpron,
+    },
+  ],
+  definition: definition,
+};
+      await updateDB( resJSON);
+      res.status(200).json(resJSON);
     }
   } catch (error) {
     console.log(error)
